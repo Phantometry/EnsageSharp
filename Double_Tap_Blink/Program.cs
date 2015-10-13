@@ -1,10 +1,7 @@
 using System;
 using Ensage;
 using SharpDX;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 
@@ -27,20 +24,22 @@ namespace Double_Tap_Blink
 
         static void Main(string[] args)
         {
-            if (!Game.IsInGame)
-                return;
-            var me = ObjectMgr.LocalHero;
-            var W = me.Spellbook.SpellW;
-            if ((me.ClassID == ClassID.CDOTA_Unit_Hero_QueenOfPain) || (me.ClassID == ClassID.CDOTA_Unit_Hero_AntiMage))
-                active = true;
-            if (active == true)
-                Game.OnWndProc += Penis;
+            Game.OnWndProc += Penis;
             Anal.Elapsed += OnTimedEvent;
 
         }
 
         static void Penis(WndEventArgs Vagina)
         {
+            if (!Game.IsInGame)
+                return;
+            var me = ObjectMgr.LocalHero;
+            var W = me.Spellbook.SpellW;
+            if ((me.ClassID == ClassID.CDOTA_Unit_Hero_QueenOfPain) || (me.ClassID == ClassID.CDOTA_Unit_Hero_AntiMage))
+                active = true;
+            if (active != true)
+                return;
+
             if (step == 1 && Vagina.Msg == KeyDown && Vagina.WParam == 'W')
             {
                 step = 2;
