@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Dagon Stealer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("MICROSOFT")]
+[assembly: AssemblyCompany("Phantometry")]
 [assembly: AssemblyProduct("Dagon Stealer")]
-[assembly: AssemblyCopyright("Copyright © MICROSOFT 2015")]
+[assembly: AssemblyCopyright("Copyright © Phantometry 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
