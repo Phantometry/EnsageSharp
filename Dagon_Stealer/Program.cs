@@ -42,7 +42,7 @@ namespace Dagon_Stealer
                 return;
             var me = ObjectMgr.LocalHero;
             var dagon = me.Inventory.Items.FirstOrDefault(Anal => Anal.Name.Substring(0, 10) == "item_dagon");
-            var enemy = ObjectMgr.GetEntities<Hero>().Where(Fuck => Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion).ToList();
+            var enemy = ObjectMgr.GetEntities<Hero>().Where(Fuck => Fuck.Team != me.Team && Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion).ToList();
             foreach (var v in enemy)
             {
                 if (dagon != null && _enabled == true)
