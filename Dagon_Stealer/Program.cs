@@ -42,12 +42,12 @@ namespace Dagon_Stealer
                 return;
             var me = ObjectMgr.LocalHero;
             var dagon = me.Inventory.Items.FirstOrDefault(Anal => Anal.Name.Substring(0, 10) == "item_dagon");
-            var enemy = ObjectMgr.GetEntities<Hero>().Where(Fuck => Fuck.Team != me.Team && Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion).ToList();
+            var enemy = ObjectMgr.GetEntities<Hero>().Where(Fuck => Fuck.Team != me.Team && Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion && !Fuck.UnitState.HasFlag(UnitState.MagicImmune)).ToList();
             foreach (var v in enemy)
             {
                 if (dagon != null && _enabled == true)
                 {
-                    if (dagon.AbilityState == AbilityState.OnCooldown)
+                    if (dagon.AbilityState == AbilityState.OnCooldown || me.Mana < dagon.ManaCost)
                         return;
                     var range = ShitDickFuck[dagon.Level - 1];
                     var damage = Math.Floor(Penis[dagon.Level - 1] * (1 - v.MagicDamageResist / 100));
@@ -99,6 +99,7 @@ namespace Dagon_Stealer
         {
             _text.OnLostDevice();
         }
+        
     }
 }
 
