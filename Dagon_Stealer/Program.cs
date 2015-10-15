@@ -22,6 +22,7 @@ namespace Dagon_Stealer
                Drawing.Direct3DDevice9,
                new FontDescription
                {
+                  
                    FaceName = "Tahoma",
                    Height = 13,
                    OutputPrecision = FontPrecision.Default,
@@ -45,9 +46,15 @@ namespace Dagon_Stealer
             var enemy = ObjectMgr.GetEntities<Hero>().Where(Fuck => Fuck.Team != me.Team && Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion && !Fuck.UnitState.HasFlag(UnitState.MagicImmune)).ToList();
             foreach (var v in enemy)
             {
+                var linkens = v.Inventory.Items.FirstOrDefault(Gay => Gay.Name == "item_sphere");
+                var linkensmod = v.Modifiers.Any(Anything => Anything.Name == "modifier_item_sphere_target");
+
                 if (dagon != null && _enabled == true)
                 {
+      
                     if (dagon.AbilityState == AbilityState.OnCooldown || me.Mana < dagon.ManaCost)
+                        return;
+                    if (linkens != null && (linkensmod || linkens.AbilityState == AbilityState.Ready))
                         return;
                     var range = ShitDickFuck[dagon.Level - 1];
                     var damage = Math.Floor(Penis[dagon.Level - 1] * (1 - v.MagicDamageResist / 100));
