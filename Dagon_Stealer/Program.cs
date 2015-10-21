@@ -4,7 +4,6 @@ using Ensage;
 using SharpDX;
 using SharpDX.Direct3D9;
 
-
 namespace Dagon_Stealer
 {
     class Program
@@ -12,16 +11,19 @@ namespace Dagon_Stealer
         const int WM_KEYUP = 0x0101;
 
         private static bool _enabled = true;
+
         private static Font _text;
+
         private static int[] Penis = new int[5] { 400, 500, 600, 700, 800 };
         private static int[] ShitDickFuck = new int[5] { 600, 650, 700, 750, 800 };
+
         static void Main(string[] args)
         {
             _text = new Font(
                Drawing.Direct3DDevice9,
                new FontDescription
                {
-                  
+
                    FaceName = "Tahoma",
                    Height = 13,
                    OutputPrecision = FontPrecision.Default,
@@ -38,37 +40,48 @@ namespace Dagon_Stealer
 
         static void Vagina(EventArgs Tits)
         {
-            if (!_enabled || !Game.IsInGame)
+            if (!Game.IsInGame)
                 return;
+
             var me = ObjectMgr.LocalHero;
-            if (me == null) return;
+            if (me == null || !me.IsAlive)
+                return;
 
             var dagon = me.Inventory.Items.FirstOrDefault(Anal => Anal.Name.Substring(0, 10) == "item_dagon");
-            if (dagon == null) return;
 
-            if (dagon.AbilityState == AbilityState.OnCooldown || me.Mana < dagon.ManaCost)
-                return;
+            var enemy = ObjectMgr.GetEntities<Hero>()
+                        .Where(Fuck => Fuck.Team != me.Team && Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion && !Fuck.UnitState.HasFlag(UnitState.MagicImmune))
+                        .ToList();
 
-            var enemy = ObjectMgr.GetEntities<Hero>().Where(Fuck => Fuck.Team != me.Team && Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion && !Fuck.UnitState.HasFlag(UnitState.MagicImmune)).ToList();
             foreach (var v in enemy)
             {
                 var linkens = v.Inventory.Items.FirstOrDefault(Gay => Gay.Name == "item_sphere");
                 var linkensmod = v.Modifiers.Any(Anything => Anything.Name == "modifier_item_sphere_target");
+                var refraction = v.Modifiers.Any(ButtFucker => ButtFucker.Name == "modifier_templar_assassin_refraction_damage");
+                var shallowgrave = v.Modifiers.Any(FuckMeInTheAssDaddy => FuckMeInTheAssDaddy.Name == "modifier_dazzle_shallow_grave");
 
-                if (linkens != null && (linkensmod || linkens.AbilityState == AbilityState.Ready))
-                    return;
-                var range = ShitDickFuck[dagon.Level - 1];
-                var damage = Math.Floor(Penis[dagon.Level - 1] * (1 - v.MagicDamageResist / 100));
-                if (GetDistance2D(v) < range && v.Health < damage)
-                    dagon.UseAbility(v);
+                if (dagon != null && _enabled == true)
+                {
+                    if (dagon.AbilityState == AbilityState.Ready && me.Mana > dagon.ManaCost)
+                    {
+                        Console.WriteLine(v.MagicDamageResist);
+                        if ((linkens != null && linkens.AbilityState == AbilityState.Ready) || (linkensmod || shallowgrave || refraction))
+                            return;
+                        var range = ShitDickFuck[dagon.Level - 1];
+                        var damage = Math.Floor(Penis[dagon.Level - 1] * (1 - v.MagicDamageResist));
+                        if (GetDistance2D(v) < range && v.Health < damage)
+                            dagon.UseAbility(v);
+                    }
+                }
             }
-
         }
+
         static double GetDistance2D(Hero hero)
         {
-            var myHero = ObjectMgr.LocalHero;
-            return Math.Sqrt(Math.Pow(hero.Position.X - myHero.Position.X, 2) + Math.Pow(hero.Position.Y - myHero.Position.Y, 2));
+            var MyHero = ObjectMgr.LocalHero;
+            return Math.Sqrt(Math.Pow(hero.Position.X - MyHero.Position.X, 2) + Math.Pow(hero.Position.Y - MyHero.Position.Y, 2));
         }
+
         private static void Game_OnWndProc(WndEventArgs args)
         {
             if (args.Msg != WM_KEYUP || args.WParam != 'K' || Game.IsChatOpen)
@@ -105,8 +118,6 @@ namespace Dagon_Stealer
         {
             _text.OnLostDevice();
         }
-        
+
     }
 }
-
-
