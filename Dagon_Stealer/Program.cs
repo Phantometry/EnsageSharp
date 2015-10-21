@@ -65,7 +65,6 @@ namespace Dagon_Stealer
                 {
                     if (dagon.AbilityState == AbilityState.Ready && me.Mana > dagon.ManaCost)
                     {
-                        Console.WriteLine(v.MagicDamageResist);
                         if ((linkens != null && linkens.AbilityState == AbilityState.Ready) || (linkensmod || pipe || shallowgrave || refraction))
                             return;
                         var range = ShitDickFuck[dagon.Level - 1];
