@@ -36,6 +36,7 @@ namespace Dagon_Stealer
             AppDomain.CurrentDomain.DomainUnload += CurrentDomain_DomainUnload;
             Game.OnUpdate += Vagina;
             Game.OnWndProc += Game_OnWndProc;
+
         }
 
         static void Vagina(EventArgs Tits)
@@ -104,9 +105,15 @@ namespace Dagon_Stealer
                 return;
 
             if (_enabled)
-                _text.DrawText(null, "Dagon Stealer: On!", 75, 535, Color.GreenYellow);
-            else
-                _text.DrawText(null, "Dagon Stealer: Off!", 75, 535, Color.Tomato);
+                _text.DrawText(null, "Dagon Stealer: On!", 1260, 575, Color.GreenYellow);;
+            {
+                if (_enabled)
+                    _text.DrawText(null, "V.1.0.0.6", 1305, 590, Color.MediumSlateBlue);
+
+                else
+                    _text.DrawText(null, "Dagon Stealer: Off!", 1260, 575, Color.Tomato);
+                    _text.DrawText(null, "V.1.0.0.6", 1305, 590, Color.MediumSlateBlue);
+            }
         }
 
         static void Drawing_OnPostReset(EventArgs args)
@@ -118,6 +125,6 @@ namespace Dagon_Stealer
         {
             _text.OnLostDevice();
         }
+            }
 
     }
-}
