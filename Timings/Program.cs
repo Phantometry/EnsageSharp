@@ -14,7 +14,7 @@ using SharpDX;
 using SharpDX.Direct3D9;
 
 namespace Timings
-{
+{ 
     internal class Program
     {
         private static List<test> Cake = new List<test>();
