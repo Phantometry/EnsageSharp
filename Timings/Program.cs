@@ -58,6 +58,7 @@ namespace Timings
               "modifier_obsidian_destroyer_essence_aura",
               "modifier_sand_king_caustic_finale_orb",
               "modifier_spirit_breaker_empowering_haste",
+              "modifier_bounty_hunter_track_effect",
               "modifier_spirit_breaker_empowering_haste_aura",
 
             };
