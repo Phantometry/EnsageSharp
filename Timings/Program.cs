@@ -1,10 +1,11 @@
 /*
-“You have to be perfect, ideal, like timings. 
+“You must be perfect, ideal, like timings. 
 When you trying to hit a stun after hex, timings is what you need. 
 When you trying to fuck bitches with euls, timings is what you need. 
 When you trying to dodge sun strike or torrent, timings is what you don't need. 
 You can be good, but your timings suck? Be perfect my friend - use timings.” (c) Bruce Phantometry 2k15 
 */
+
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ using SharpDX;
 using SharpDX.Direct3D9;
 
 namespace Timings
-{ 
+{
     internal class Program
     {
         private static List<test> Cake = new List<test>();
