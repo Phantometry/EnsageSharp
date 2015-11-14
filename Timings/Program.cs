@@ -298,7 +298,6 @@ namespace Timings
                         }
 
                     var r = Cake.Where(x => x.Unit.Name == Alien.Name).FirstOrDefault();
-                    Console.WriteLine(Modif.Name);
 
                     if (Alien.Name != "npc_dota_thinker" && r != null && GetCurrentTime(Alien) >= 0 && !SpecialCases.Contains(IsTheBestCoderEver.Modifier.Name))
                         Cake.Remove(r);
