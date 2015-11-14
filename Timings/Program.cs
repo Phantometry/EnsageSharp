@@ -1,5 +1,5 @@
 /*
-“You have be perfect, ideal, like timings. 
+“You have to be perfect, ideal, like timings. 
 When you trying to hit a stun after hex, timings is what you need. 
 When you trying to fuck bitches with euls, timings is what you need. 
 When you trying to dodge sun strike or torrent, timings is what you don't need. 
