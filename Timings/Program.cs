@@ -47,6 +47,7 @@ namespace Timings
               "modifier_bristleback_quill_spray_stack",
               "modifier_abaddon_frostmourne_buff",
               "modifier_rubick_null_field_effect",
+              "modifier_rubick_null_field",
               "modifier_abaddon_frostmourne_debuff",
               "modifier_kunkka_ghost_ship_damage_absorb",
               "modifier_jakiro_liquid_fire_burn",
