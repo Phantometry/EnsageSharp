@@ -12,30 +12,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Ensage;
 using SharpDX;
-using SharpDX.Direct3D9;
 
 namespace Timings
 {
     internal class Program
     {
-        private static List<test> Cake = new List<test>();
-        private static Modifier Mod;
-
-        private static test Removal;
-
-        private static Vector2 PicPos;
-        private static Font _text;
+        private static List<ModifierInfo> cake = new List<ModifierInfo>();
 
         private static float scaleX;
         private static float scaleY;
 
-        private static ParticleEffect effect;
-        private static readonly List<ParticleEffect> Effects = new List<ParticleEffect>();
+        private static float linaTime, bhTime, torrentTime, linaTimer, bhTimer, torrentTimer, leshTime, leshTimer, stormTime, stormTimer;
+        private static string time = "cakescript1224";
 
-        private static float LinaTime, BHTime, TorrentTime, LinaTimer, BHTimer, TorrentTimer, LeshTime, LeshTimer, StormTime, StormTimer;
-        private static string Time = "cakescript1224";
-
-        private static List<string> Ignore = new List<string>()
+        private static readonly List<string> IgnoreList = new List<string>()
             {
               "modifier_phantom_lancer_juxtapose_illusion",
               "modifier_drow_ranger_trueshot_aura",
@@ -65,7 +55,7 @@ namespace Timings
 
             };
 
-        private static List<string> SpecialCases = new List<string>()
+        private static readonly List<string> SpecialCases = new List<string>()
             {
               "modifier_lina_light_strike_array",
               "modifier_kunkka_torrent_thinker",
@@ -74,141 +64,18 @@ namespace Timings
               "modifier_spirit_breaker_charge_of_darkness_vision",
               "modifier_storm_spirit_static_remnant_thinker",
               "modifier_invoker_sun_strike",
-              "modifier_invoker_sun_strike"
             };
 
-        public static void Main(string[] Cyka)
+        public static void Main(string[] cyka)
         {
             scaleX = ((float)Drawing.Width / 1366);
             scaleY = ((float)Drawing.Height / 768);
 
-            _text = new Font(
-                Drawing.Direct3DDevice9,
-                new FontDescription
-                {
-                    FaceName = "Palatino",
-                    Height = (int)(19 * scaleY),
-                    Width = (int)(8 * scaleX),
-                    Weight = FontWeight.UltraBold,
-                    OutputPrecision = FontPrecision.Default,
-                    Quality = FontQuality.Draft
-                });
-
             Unit.OnModifierAdded += ModifierAdded;
             Unit.OnModifierRemoved += ModifierRemoved;
-            Drawing.OnPreReset += Drawing_OnPreReset;
-            Drawing.OnPostReset += Drawing_OnPostReset;
-            Drawing.OnEndScene += Drawing_OnEndScene;
             Drawing.OnDraw += OnDraw;
-            AppDomain.CurrentDomain.DomainUnload += CurrentDomain_DomainUnload;
         }
 
-        static void CurrentDomain_DomainUnload(object sender, EventArgs e)
-        {
-            _text.Dispose();
-        }
-
-        static void Drawing_OnPostReset(EventArgs args)
-        {
-            _text.OnResetDevice();
-        }
-
-        static void Drawing_OnPreReset(EventArgs args)
-        {
-            _text.OnLostDevice();
-        }
-
-        static void Drawing_OnEndScene(EventArgs args)
-        {
-            if (!Game.IsInGame)
-                return;
-
-            var player = ObjectMgr.LocalPlayer;
-            if (player == null || player.Team == Team.Observer)
-                return;
-
-            try
-            {
-                var Units = ObjectMgr.GetEntities<Unit>().Where(x => x.IsVisible && x.IsAlive && x.IsValid).ToList();
-                foreach (var unit in Units)
-                {
-                    if (Cake.Any(x => x.Unit.Name == unit.Name))
-                    {
-                        Vector2 screenPos;
-                        var unitPos = unit.Position + new Vector3(0, 0, unit.HealthBarOffset);
-                        if (!Drawing.WorldToScreen(unitPos, out screenPos))
-                            continue;
-
-                        Mod = Cake.Where(x => x.Unit.Name == unit.Name).FirstOrDefault().Modifier;
-
-                        bool Random = true;
-
-                        if (SpecialCases.Contains(Mod.Name))
-                        {
-                            Random = false;
-                            switch (Mod.Name)
-                            {
-                                case "modifier_lina_light_strike_array":
-                                    LinaTimer = (float)(LinaTime + 0.5) - Game.GameTime;
-                                    Time = LinaTimer.ToString("0.0");
-                                    break;
-                                case "modifier_kunkka_torrent_thinker":
-                                    TorrentTimer = (float)(TorrentTime + 1.6) - Game.GameTime;
-                                    Time = TorrentTimer.ToString("0.0");
-                                    break;
-                                case "modifier_enigma_black_hole_thinker":
-                                    BHTimer = (float)(BHTime + 4) - Game.GameTime;
-                                    Time = BHTimer.ToString("0.0");
-                                    break;
-                                case "modifier_leshrac_split_earth_thinker":
-                                    LeshTimer = (float)(LeshTime + 0.35) - Game.GameTime;
-                                    Time = LeshTimer.ToString("0.0");
-                                    break;
-                                case "modifier_storm_spirit_static_remnant_thinker":
-                                    StormTimer = (float)(StormTime + 12) - Game.GameTime;
-                                    Time = StormTimer.ToString("0.0");
-                                    break;
-                                case "modifier_invoker_sun_strike":
-                                    Random = true;
-                                    break;
-                                case "modifier_spirit_breaker_charge_of_darkness_vision":
-                                    Time = "ARGHH !";
-                                    break;
-                                default:
-                                    Random = true;
-                                    break;
-                            }
-                            if (Time.Contains("-"))
-                                return;
-                        }
-
-                        // Draw text
-                        string text = Random ? Mod.RemainingTime.ToString("0.0") : Time;
-
-                        double value;
-
-                        if (!(Mod.Name == "modifier_spirit_breaker_charge_of_darkness_vision"))
-                            value = Double.Parse(text);
-                        else
-                            value = 1.2;
-
-                        if (value < 0.05)
-                            continue;
-
-                        var v = Cake.FirstOrDefault(x => x.Unit.Name == unit.Name);
-
-                        Vector2 textPos = new Vector2((v.Vector2.X) + (27 * scaleX), (v.Vector2.Y - (0 * scaleY)));
-
-                        _text.DrawText(null, text, (int)textPos.X, (int)textPos.Y, value < 1 ? Color.Red : Color.Aquamarine);
-
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                //
-            }
-        }
 
         static void OnDraw(EventArgs args)
         {
@@ -219,138 +86,196 @@ namespace Timings
             if (player == null || player.Team == Team.Observer)
                 return;
 
-            var Units = ObjectMgr.GetEntities<Unit>().Where(x => x.IsVisible && x.IsAlive).ToList();
 
-            foreach (var unit in Units)
+            foreach (var v in cake)
             {
-                foreach (var v in Cake)
+                var unit = v.Unit;
+                if (unit.IsValid && unit.IsAlive && unit.IsVisible)
                 {
-                    if (v.Unit.Handle == unit.Handle)
+                    Vector2 screenPos;
+                    var unitPos = unit.Position + new Vector3(0, 0, unit.HealthBarOffset);
+                    if (!Drawing.WorldToScreen(unitPos, out screenPos))
+                        continue;
+
+                    try
                     {
-                        Vector2 screenPos;
-                        var unitPos = unit.Position + new Vector3(0, 0, unit.HealthBarOffset);
-                        if (!Drawing.WorldToScreen(unitPos, out screenPos))
+                        var mod = v.Modifier;
+
+                        var start = screenPos + new Vector2(-51 * scaleX, -22 * scaleY);
+                        v.PicPosition = start + new Vector2((float)62.5 * scaleX, 14 * scaleY);
+
+                        Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)));
+
+                        // Draw text
+                        bool random = true;
+                        if (SpecialCases.Contains(mod.Name))
+                        {
+                            random = false;
+                            switch (mod.Name)
+                            {
+                                case "modifier_lina_light_strike_array":
+                                    linaTimer = linaTime + 0.5f - Game.GameTime;
+                                    time = linaTimer.ToString("0.0");
+                                    break;
+                                case "modifier_kunkka_torrent_thinker":
+                                    torrentTimer = torrentTime + 1.6f - Game.GameTime;
+                                    time = torrentTimer.ToString("0.0");
+                                    break;
+                                case "modifier_enigma_black_hole_thinker":
+                                    bhTimer = bhTime + 4.0f - Game.GameTime;
+                                    time = bhTimer.ToString("0.0");
+                                    break;
+                                case "modifier_leshrac_split_earth_thinker":
+                                    leshTimer = leshTime + 0.35f - Game.GameTime;
+                                    time = leshTimer.ToString("0.0");
+                                    break;
+                                case "modifier_storm_spirit_static_remnant_thinker":
+                                    stormTimer = stormTime + 12.0f - Game.GameTime;
+                                    time = stormTimer.ToString("0.0");
+                                    break;
+                                case "modifier_invoker_sun_strike":
+                                    random = true;
+                                    break;
+                                case "modifier_spirit_breaker_charge_of_darkness_vision":
+                                    time = "ARGHH !";
+                                    break;
+                                default:
+                                    random = true;
+                                    break;
+                            }
+                            if (time.Contains("-"))
+                                return;
+                        }
+
+                        // Draw text
+                        var text = random ? mod.RemainingTime.ToString("0.0") : time;
+                        var value = mod.Name != "modifier_spirit_breaker_charge_of_darkness_vision"
+                            ? double.Parse(text) : 1.2;
+
+                        if (value < 0.05)
                             continue;
 
-                        try
-                        {
-                            Mod = v.Modifier;
-
-                            var start = screenPos + new Vector2(-51 * scaleX, -22 * scaleY);
-
-                            v.Vector2 = start + new Vector2((float)62.5 * scaleX, 14 * scaleY);
-
-                            Drawing.DrawRect(v.Vector2, new Vector2(25 * scaleX, 25 * scaleY), Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", Mod.TextureName)));
-                        }
-                        catch (Exception)
-                        {
-                            //
-                        }
+                        Vector2 textPos = new Vector2((v.PicPosition.X) + (27 * scaleX), (v.PicPosition.Y - (0 * scaleY)));
+                        Console.WriteLine("{0}: {1}",text,textPos);
+                        Drawing.DrawText(text, textPos, new Vector2(23, 200), value < 1 ? Color.Red : Color.Aquamarine, FontFlags.AntiAlias | FontFlags.Additive | FontFlags.DropShadow);
+                    }
+                    catch (Exception)
+                    {
+                        //
                     }
                 }
+
             }
         }
 
-        static void ModifierAdded(Unit Alien, ModifierChangedEventArgs IsTheBestCoderEver)
+        static void ModifierAdded(Unit unit, ModifierChangedEventArgs args)
         {
-            var Modif = IsTheBestCoderEver.Modifier;
+            var modif = args.Modifier;
 
             try
             {
-                if (Ignore.Contains(IsTheBestCoderEver.Modifier.Name)
-                    || ((IsTheBestCoderEver.Modifier.Name.Contains("item") || IsTheBestCoderEver.Modifier.Name.Contains("truesight") || IsTheBestCoderEver.Modifier.Name.Contains("glyph") || IsTheBestCoderEver.Modifier.Name.Contains("aura"))
-                    && !((IsTheBestCoderEver.Modifier.Name.Contains("item_pipe_barrier") || (IsTheBestCoderEver.Modifier.Name.Contains("windwalk"))))))
+                if (IgnoreList.Contains(args.Modifier.Name)
+                    || ((args.Modifier.Name.Contains("item") || args.Modifier.Name.Contains("truesight") || args.Modifier.Name.Contains("glyph") || args.Modifier.Name.Contains("aura"))
+                    && !((args.Modifier.Name.Contains("item_pipe_barrier") || (args.Modifier.Name.Contains("windwalk"))))))
                     return;
 
-                if (IsTheBestCoderEver.Modifier.RemainingTime < 150 && (IsTheBestCoderEver.Modifier.RemainingTime > 0.1 || SpecialCases.Contains(IsTheBestCoderEver.Modifier.Name))
-                    && (SpecialCases.Contains(IsTheBestCoderEver.Modifier.Name) || Alien.ClassID == ClassID.CDOTA_BaseNPC || IsTheBestCoderEver.Modifier.IsDebuff || IsTheBestCoderEver.Modifier.RemainingTime >= GetCurrentTime(Alien))
-                    && Alien.ClassID != ClassID.CDOTA_BaseNPC_Creep
-                    && Alien.ClassID != ClassID.CDOTA_BaseNPC_Creep_Lane
-                    && Alien.ClassID != ClassID.CDOTA_BaseNPC_Creep_Neutral
-                    && Alien.ClassID != ClassID.CDOTA_BaseNPC_Creep_Siege
-                    && Alien.ClassID != ClassID.CDOTA_BaseNPC_Tower)
+                if (args.Modifier.RemainingTime < 150 && (args.Modifier.RemainingTime > 0.1 || SpecialCases.Contains(args.Modifier.Name))
+                    && (SpecialCases.Contains(args.Modifier.Name) || unit.ClassID == ClassID.CDOTA_BaseNPC || args.Modifier.IsDebuff || args.Modifier.RemainingTime >= GetCurrentTime(unit))
+                    && unit.ClassID != ClassID.CDOTA_BaseNPC_Creep
+                    && unit.ClassID != ClassID.CDOTA_BaseNPC_Creep_Lane
+                    && unit.ClassID != ClassID.CDOTA_BaseNPC_Creep_Neutral
+                    && unit.ClassID != ClassID.CDOTA_BaseNPC_Creep_Siege
+                    && unit.ClassID != ClassID.CDOTA_BaseNPC_Tower)
                 {
-                    if (SpecialCases.Contains(IsTheBestCoderEver.Modifier.Name))
-                        switch (Modif.Name)
+                    if (SpecialCases.Contains(args.Modifier.Name))
+                        switch (modif.Name)
                         {
                             case "modifier_lina_light_strike_array":
-                                LinaTime = Game.GameTime;
-                                effect = Alien.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                effect.SetControlPoint(1, new Vector3(225, 0, 0));
+                                {
+                                    linaTime = Game.GameTime;
+                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
+                                    effect.SetControlPoint(1, new Vector3(225, 0, 0));
+                                }
                                 break;
                             case "modifier_kunkka_torrent_thinker":
-                                TorrentTime = Game.GameTime;
-                                effect = Alien.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                effect.SetControlPoint(1, new Vector3(225, 0, 0));
+                                {
+                                    torrentTime = Game.GameTime;
+                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
+                                    effect.SetControlPoint(1, new Vector3(225, 0, 0));
+                                }
                                 break;
                             case "modifier_enigma_black_hole_thinker":
-                                BHTime = Game.GameTime;
+                                bhTime = Game.GameTime;
                                 break;
                             case "modifier_storm_spirit_static_remnant_thinker":
-                                StormTime = Game.GameTime;
+                                stormTime = Game.GameTime;
                                 break;
                             case "modifier_leshrac_split_earth_thinker":
-                                LeshTime = Game.GameTime;
-                                var Lesh = ObjectMgr.GetEntities<Hero>().Where(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Leshrac).FirstOrDefault();
-                                effect = Alien.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                effect.SetControlPoint(1, new Vector3(Lesh.Spellbook.SpellQ.AbilityData.FirstOrDefault(x => x.Name == "radius").GetValue(Lesh.Spellbook.SpellQ.Level - 1), 0, 0));
+                                {
+                                    leshTime = Game.GameTime;
+                                    var lesh =
+                                        ObjectMgr.GetEntities<Hero>()
+                                            .FirstOrDefault(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Leshrac);
+                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
+                                    effect.SetControlPoint(
+                                        1,
+                                        new Vector3(
+                                            lesh.Spellbook.SpellQ.AbilityData.FirstOrDefault(x => x.Name == "radius")
+                                                .GetValue(lesh.Spellbook.SpellQ.Level - 1),
+                                            0,
+                                            0));
+                                }
                                 break;
                             case "modifier_invoker_sun_strike":
-                                effect = Alien.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                effect.SetControlPoint(1, new Vector3(175, 0, 0));
+                                {
+                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
+                                    effect.SetControlPoint(1, new Vector3(175, 0, 0));
+                                }
                                 break;
                         }
 
-                    var r = Cake.Where(x => x.Unit.Name == Alien.Name).FirstOrDefault();
+                    var r = cake.FirstOrDefault(x => x.Unit.Name == unit.Name);
 
-                    if (Alien.Name != "npc_dota_thinker" && r != null && GetCurrentTime(Alien) >= 0 && !SpecialCases.Contains(IsTheBestCoderEver.Modifier.Name))
-                        Cake.Remove(r);
+                    if (unit.Name != "npc_dota_thinker" && r != null && GetCurrentTime(unit) >= 0 && !SpecialCases.Contains(args.Modifier.Name))
+                        cake.Remove(r);
 
-                    Cake.Add(new test(Modif, Alien, new Vector2(0, 0)));
+                    cake.Add(new ModifierInfo(modif, unit, new Vector2(0, 0)));
                 }
             }
             catch (Exception)
             {
-                Cake.Clear();
-                Cake.Add(new test(Modif, Alien, new Vector2(0, 0)));
+                cake.Clear();
+                cake.Add(new ModifierInfo(modif, unit, new Vector2(0, 0)));
             }
 
         }
 
         static float GetCurrentTime(Unit unit)
         {
-            var Unit = Cake.Where(x => x.Unit.ClassID == unit.ClassID).FirstOrDefault();
-
-            if (Unit == null)
-                return -1;
-
-            return Unit.Modifier.RemainingTime;
+            var foundEntry = cake.FirstOrDefault(x => x.Unit.ClassID == unit.ClassID);
+            return foundEntry != null ? foundEntry.Modifier.RemainingTime : -1;
         }
 
         static string GetCurrentName(Unit unit)
         {
-            var Unit = Cake.Where(x => x.Unit.ClassID == unit.ClassID).FirstOrDefault();
-
-            if (Unit == null)
-                return "none";
-
-            return Unit.Modifier.Name;
+            var findUnit = cake.FirstOrDefault(x => x.Unit.ClassID == unit.ClassID);
+            return findUnit == null ? "none" : findUnit.Modifier.Name;
         }
 
-        static void ModifierRemoved(Unit Alien, ModifierChangedEventArgs IsTheBestCoderEver)
+        static void ModifierRemoved(Unit unit, ModifierChangedEventArgs args)
         {
-            Modifier Modif = IsTheBestCoderEver.Modifier;
-            if (Ignore.Contains(IsTheBestCoderEver.Modifier.Name)
-                || ((IsTheBestCoderEver.Modifier.Name.Contains("item") || IsTheBestCoderEver.Modifier.Name.Contains("truesight") || IsTheBestCoderEver.Modifier.Name.Contains("glyph"))
-                && !((IsTheBestCoderEver.Modifier.Name.Contains("item_pipe_barrier") || (IsTheBestCoderEver.Modifier.Name.Contains("windwalk"))))))
+            var mod = args.Modifier;
+            if (IgnoreList.Contains(mod.Name)
+                || ((mod.Name.Contains("item") || mod.Name.Contains("truesight") || mod.Name.Contains("glyph"))
+                && !((mod.Name.Contains("item_pipe_barrier") || (mod.Name.Contains("windwalk"))))))
                 return;
 
             try
             {
-                var r = Cake.Where(x => x.Unit.Name == Alien.Name && x.Modifier.Name == IsTheBestCoderEver.Modifier.Name).FirstOrDefault();
+                var r = cake.FirstOrDefault(x => x.Unit.Name == unit.Name && x.Modifier.Name == mod.Name);
 
                 if (r != null)
-                    Cake.Remove(r);
+                    cake.Remove(r);
             }
             catch (Exception)
             {
@@ -358,18 +283,18 @@ namespace Timings
             }
         }
 
-        public class test : IEquatable<test>
+        public class ModifierInfo : IEquatable<ModifierInfo>
         {
-            public test(Modifier modif, Unit unit, Vector2 PicPos)
+            public ModifierInfo(Modifier modifier, Unit unit, Vector2 picPos)
             {
-                this.Modifier = modif;
+                this.Modifier = modifier;
                 this.Unit = unit;
-                this.Vector2 = PicPos;
+                this.PicPosition = picPos;
             }
             public Modifier Modifier { get; set; }
             public Unit Unit { get; set; }
-            public Vector2 Vector2 { get; set; }
-            public bool Equals(test other)
+            public Vector2 PicPosition { get; set; }
+            public bool Equals(ModifierInfo other)
             {
                 if (other == null) return false;
                 return (this.Unit.Equals(other.Unit));
