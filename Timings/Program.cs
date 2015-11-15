@@ -156,7 +156,6 @@ namespace Timings
                             continue;
 
                         Vector2 textPos = new Vector2((v.PicPosition.X) + (27 * scaleX), (v.PicPosition.Y - (0 * scaleY)));
-                        Console.WriteLine("{0}: {1}",text,textPos);
                         Drawing.DrawText(text, textPos, new Vector2(23, 200), value < 1 ? Color.Red : Color.Aquamarine, FontFlags.AntiAlias | FontFlags.Additive | FontFlags.DropShadow);
                     }
                     catch (Exception)
