@@ -5,7 +5,7 @@ using Ensage;
 using SharpDX;
 using SharpDX.Direct3D9;
 
-namespace Timings
+namespace Timings_Optional
 {
     internal class Program
     {
