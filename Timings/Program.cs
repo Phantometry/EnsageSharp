@@ -29,6 +29,9 @@ namespace Timings
             {
               "modifier_phantom_lancer_juxtapose_illusion",
               "modifier_drow_ranger_trueshot_aura",
+              "modifier_slark_essence_shift_buff",
+              "modifier_slark_essence_shift_debuff",
+              "modifier_slark_essence_shift_debuff_counter",
               "modifier_beastmaster_wild_axe_invulnerable",
               "modififer_pipe_debuff",
               "modifier_bristleback_warpath_stack",
