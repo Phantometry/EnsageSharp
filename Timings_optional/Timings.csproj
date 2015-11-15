@@ -7,8 +7,8 @@
     <ProjectGuid>{01DFC8BD-984D-4013-B85C-D74C9661DF72}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Timings</RootNamespace>
-    <AssemblyName>Timings</AssemblyName>
+    <RootNamespace>Timings_Optional</RootNamespace>
+    <AssemblyName>Timings_Optional</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
