@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Timings")]
+[assembly: AssemblyTitle("Timings_Optional")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Phantometry")]
-[assembly: AssemblyProduct("Timings")]
+[assembly: AssemblyProduct("Timings_Optional")]
 [assembly: AssemblyCopyright("Copyright © Phantometry 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
