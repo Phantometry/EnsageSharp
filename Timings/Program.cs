@@ -122,7 +122,6 @@ namespace Timings
                         {
                             cache.Add(mod.TextureName, Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)), policy);
                             Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)));
-                            Console.WriteLine("Created {0}", mod.TextureName);
                         }
 
                         // Draw text
