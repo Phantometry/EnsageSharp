@@ -1,3 +1,19 @@
+Skip to content
+This repository  
+Search
+Pull requests
+Issues
+Gist
+ @Phantometry
+ Watch 1
+  Star 0
+  Fork 3 Rulfy/EnsageSharp-1
+forked from Phantometry/EnsageSharp
+ Tree: 6eaa036115  EnsageSharp-1/Timings/Program.cs
+6eaa036  2 days ago
+@Rulfy Rulfy much update
+2 contributors @Phantometry @Rulfy
+RawBlameHistory     305 lines (267 sloc)  13.6 KB
 /*
 “You have to be perfect, ideal, like timings. 
 When you trying to hit a stun after hex, timings is what you need. 
@@ -10,7 +26,6 @@ You can be good, but your timings suck? Be perfect my friend - use timings.” (
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Caching;
 using Ensage;
 using SharpDX;
 
@@ -23,21 +38,13 @@ namespace Timings
         private static float scaleX;
         private static float scaleY;
 
-        private static ObjectCache cache = MemoryCache.Default;
-        private static CacheItemPolicy policy = new CacheItemPolicy();
-
-        private static float linaTime, bhTime, torrentTime, mysticFlareTime, linaTimer, bhTimer, torrentTimer, leshTime, leshTimer, stormTime, stormTimer;
+        private static float linaTime, bhTime, torrentTime, linaTimer, bhTimer, torrentTimer, leshTime, leshTimer, stormTime, stormTimer;
         private static string time = "cakescript1224";
 
         private static readonly List<string> IgnoreList = new List<string>()
             {
               "modifier_phantom_lancer_juxtapose_illusion",
               "modifier_drow_ranger_trueshot_aura",
-              "modifier_slark_essence_shift_buff",
-              "modifier_slark_essence_shift_debuff",
-              "modifier_skeleton_king_hellfire_blast",
-              "modifier_slark_essence_shift_debuff_counter",
-              "modifier_desolator_buff",
               "modifier_beastmaster_wild_axe_invulnerable",
               "modififer_pipe_debuff",
               "modifier_bristleback_warpath_stack",
@@ -72,7 +79,6 @@ namespace Timings
               "modifier_leshrac_split_earth_thinker",
               "modifier_spirit_breaker_charge_of_darkness_vision",
               "modifier_storm_spirit_static_remnant_thinker",
-              "modifier_skywrath_mage_mystic_flare_thinker",
               "modifier_invoker_sun_strike",
             };
 
@@ -80,8 +86,6 @@ namespace Timings
         {
             scaleX = ((float)Drawing.Width / 1366);
             scaleY = ((float)Drawing.Height / 768);
-
-            policy.SlidingExpiration = TimeSpan.FromMinutes(15);
 
             Unit.OnModifierAdded += ModifierAdded;
             Unit.OnModifierRemoved += ModifierRemoved;
@@ -116,14 +120,7 @@ namespace Timings
                         var start = screenPos + new Vector2(-51 * scaleX, -22 * scaleY);
                         v.PicPosition = start + new Vector2((float)62.5 * scaleX, 14 * scaleY);
 
-                        if (cache[mod.TextureName] != null)
-                            Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), (DotaTexture)cache[mod.TextureName]);
-                        else
-                        {
-                            cache.Add(mod.TextureName, Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)), policy);
-                            Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)));
-                            Console.WriteLine("Created {0}", mod.TextureName);
-                        }
+                        Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)));
 
                         // Draw text
                         bool random = true;
@@ -143,10 +140,6 @@ namespace Timings
                                 case "modifier_enigma_black_hole_thinker":
                                     bhTimer = bhTime + 4.0f - Game.GameTime;
                                     time = bhTimer.ToString("0.0");
-                                    break;
-                                case "modifier_skywrath_mage_mystic_flare_thinker":
-                                    mysticFlareTime = mysticFlareTime + 2.4f - Game.GameTime;
-                                    time = mysticFlareTime.ToString("0.0");
                                     break;
                                 case "modifier_leshrac_split_earth_thinker":
                                     leshTimer = leshTime + 0.35f - Game.GameTime;
@@ -179,6 +172,7 @@ namespace Timings
                             continue;
 
                         Vector2 textPos = new Vector2((v.PicPosition.X) + (27 * scaleX), (v.PicPosition.Y - (0 * scaleY)));
+                        Console.WriteLine("{0}: {1}",text,textPos);
                         Drawing.DrawText(text, textPos, new Vector2(23, 200), value < 1 ? Color.Red : Color.Aquamarine, FontFlags.AntiAlias | FontFlags.Additive | FontFlags.DropShadow);
                     }
                     catch (Exception)
@@ -224,13 +218,6 @@ namespace Timings
                                     torrentTime = Game.GameTime;
                                     var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
                                     effect.SetControlPoint(1, new Vector3(225, 0, 0));
-                                }
-                                break;
-                            case "modifier_skywrath_mage_mystic_flare_thinker":
-                                {
-                                    mysticFlareTime = Game.GameTime;
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(1, new Vector3(170, 0, 0));
                                 }
                                 break;
                             case "modifier_enigma_black_hole_thinker":
@@ -331,4 +318,5 @@ namespace Timings
         }
     }
 }
-
+Status API Training Shop Blog About Pricing
+© 2015 GitHub, Inc. Terms Privacy Security Contact Help
