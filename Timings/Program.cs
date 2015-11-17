@@ -10,6 +10,7 @@ You can be good, but your timings suck? Be perfect my friend - use timings.” (
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using Ensage;
 using SharpDX;
 
@@ -22,7 +23,10 @@ namespace Timings
         private static float scaleX;
         private static float scaleY;
 
-        private static float linaTime, bhTime, torrentTime, linaTimer, bhTimer, torrentTimer, leshTime, leshTimer, stormTime, stormTimer;
+        private static ObjectCache cache = MemoryCache.Default;
+        private static CacheItemPolicy policy = new CacheItemPolicy();
+
+        private static float linaTime, bhTime, torrentTime, mysticFlareTime, linaTimer, bhTimer, torrentTimer, leshTime, leshTimer, stormTime, stormTimer;
         private static string time = "cakescript1224";
 
         private static readonly List<string> IgnoreList = new List<string>()
@@ -33,6 +37,7 @@ namespace Timings
               "modifier_slark_essence_shift_debuff",
               "modifier_skeleton_king_hellfire_blast",
               "modifier_slark_essence_shift_debuff_counter",
+              "modifier_desolator_buff",
               "modifier_beastmaster_wild_axe_invulnerable",
               "modififer_pipe_debuff",
               "modifier_bristleback_warpath_stack",
@@ -67,6 +72,7 @@ namespace Timings
               "modifier_leshrac_split_earth_thinker",
               "modifier_spirit_breaker_charge_of_darkness_vision",
               "modifier_storm_spirit_static_remnant_thinker",
+              "modifier_skywrath_mage_mystic_flare_thinker",
               "modifier_invoker_sun_strike",
             };
 
@@ -74,6 +80,8 @@ namespace Timings
         {
             scaleX = ((float)Drawing.Width / 1366);
             scaleY = ((float)Drawing.Height / 768);
+
+            policy.SlidingExpiration = TimeSpan.FromMinutes(15);
 
             Unit.OnModifierAdded += ModifierAdded;
             Unit.OnModifierRemoved += ModifierRemoved;
@@ -108,7 +116,14 @@ namespace Timings
                         var start = screenPos + new Vector2(-51 * scaleX, -22 * scaleY);
                         v.PicPosition = start + new Vector2((float)62.5 * scaleX, 14 * scaleY);
 
-                        Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)));
+                        if (cache[mod.TextureName] != null)
+                            Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), (DotaTexture)cache[mod.TextureName]);
+                        else
+                        {
+                            cache.Add(mod.TextureName, Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)), policy);
+                            Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)));
+                            Console.WriteLine("Created {0}", mod.TextureName);
+                        }
 
                         // Draw text
                         bool random = true;
@@ -128,6 +143,10 @@ namespace Timings
                                 case "modifier_enigma_black_hole_thinker":
                                     bhTimer = bhTime + 4.0f - Game.GameTime;
                                     time = bhTimer.ToString("0.0");
+                                    break;
+                                case "modifier_skywrath_mage_mystic_flare_thinker":
+                                    mysticFlareTime = mysticFlareTime + 2.4f - Game.GameTime;
+                                    time = mysticFlareTime.ToString("0.0");
                                     break;
                                 case "modifier_leshrac_split_earth_thinker":
                                     leshTimer = leshTime + 0.35f - Game.GameTime;
@@ -205,6 +224,13 @@ namespace Timings
                                     torrentTime = Game.GameTime;
                                     var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
                                     effect.SetControlPoint(1, new Vector3(225, 0, 0));
+                                }
+                                break;
+                            case "modifier_skywrath_mage_mystic_flare_thinker":
+                                {
+                                    mysticFlareTime = Game.GameTime;
+                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
+                                    effect.SetControlPoint(1, new Vector3(170, 0, 0));
                                 }
                                 break;
                             case "modifier_enigma_black_hole_thinker":
@@ -305,3 +331,4 @@ namespace Timings
         }
     }
 }
+
