@@ -31,6 +31,7 @@ namespace Timings
               "modifier_drow_ranger_trueshot_aura",
               "modifier_slark_essence_shift_buff",
               "modifier_slark_essence_shift_debuff",
+              "modifier_skeleton_king_hellfire_blast",
               "modifier_slark_essence_shift_debuff_counter",
               "modifier_beastmaster_wild_axe_invulnerable",
               "modififer_pipe_debuff",
