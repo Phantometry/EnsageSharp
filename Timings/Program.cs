@@ -33,6 +33,11 @@ namespace Timings
             {
               "modifier_phantom_lancer_juxtapose_illusion",
               "modifier_drow_ranger_trueshot_aura",
+              "modifier_slark_essence_shift_debuff",
+              "modifier_slark_essence_shift_debuff_counter",
+              "modifier_slark_essence_shift",
+              "modifier_nightstalker_darkness_blind",
+              "modifier_night_stalker_darkness",
               "modifier_slark_essence_shift_buff",
               "modifier_slark_essence_shift_debuff",
               "modifier_skeleton_king_hellfire_blast",
