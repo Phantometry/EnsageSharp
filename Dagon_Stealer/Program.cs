@@ -1,46 +1,27 @@
 using System;
 using System.Linq;
+using Ensage.Common.Menu;
 using Ensage;
 using SharpDX;
 using SharpDX.Direct3D9;
 
-namespace Dagon_Stealer
-{
-    class Program
-    {
-        const int WM_KEYUP = 0x0101;
-
-        private static bool _enabled = true;
-
+namespace Dagon_Stealer {
+    class Program {
         private static Font _text;
+        private static readonly int[] Penis = new int[5] { 400, 500, 600, 700, 800 };
+        private static readonly int[] ShitDickFuck = new int[5] { 600, 650, 700, 750, 800 };
+        private static readonly Menu Menu = new Menu("Dagon Stealer", "dagonstealer", true);
 
-        private static int[] Penis = new int[5] { 400, 500, 600, 700, 800 };
-        private static int[] ShitDickFuck = new int[5] { 600, 650, 700, 750, 800 };
+        private static void Main(string[] args) {
+            var optionsMenu = new Menu("Options", "options");
+            Menu.AddSubMenu(optionsMenu);
+            Menu.AddItem(new MenuItem("keyBind", "Main Key").SetValue(new KeyBind('K', KeyBindType.Toggle, true)));
+            Menu.AddToMainMenu();
 
-        static void Main(string[] args)
-        {
-            _text = new Font(
-               Drawing.Direct3DDevice9,
-               new FontDescription
-               {
-
-                   FaceName = "Tahoma",
-                   Height = 13,
-                   OutputPrecision = FontPrecision.Default,
-                   Quality = FontQuality.Default
-               });
-
-            Drawing.OnPreReset += Drawing_OnPreReset;
-            Drawing.OnPostReset += Drawing_OnPostReset;
-            Drawing.OnEndScene += Drawing_OnEndScene;
-            AppDomain.CurrentDomain.DomainUnload += CurrentDomain_DomainUnload;
             Game.OnUpdate += Vagina;
-            Game.OnWndProc += Game_OnWndProc;
-
         }
 
-        static void Vagina(EventArgs Tits)
-        {
+        private static void Vagina(EventArgs Tits) {
             if (!Game.IsInGame)
                 return;
 
@@ -49,76 +30,38 @@ namespace Dagon_Stealer
                 return;
 
             var dagon = me.Inventory.Items.FirstOrDefault(Anal => Anal.Name.Contains("item_dagon"));
-
             var enemy = ObjectMgr.GetEntities<Hero>()
                         .Where(Fuck => Fuck.Team != me.Team && Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion && !Fuck.UnitState.HasFlag(UnitState.MagicImmune))
                         .ToList();
 
-            foreach (var v in enemy)
-            {
+            foreach (var v in enemy) {
                 var linkens = v.Inventory.Items.FirstOrDefault(Gay => Gay.Name == "item_sphere");
                 var linkensmod = v.Modifiers.Any(Anything => Anything.Name == "modifier_item_sphere_target");
                 var refraction = v.Modifiers.Any(ButtFucker => ButtFucker.Name == "modifier_templar_assassin_refraction_damage");
                 var shallowgrave = v.Modifiers.Any(FuckMeInTheAssDaddy => FuckMeInTheAssDaddy.Name == "modifier_dazzle_shallow_grave");
                 var pipe = v.Modifiers.Any(SuckMyCockSenpai => SuckMyCockSenpai.Name == "modifier_item_pipe_barrier");
+                var blademail = v.Modifiers.Any(PleaseDrillMyass => PleaseDrillMyass.Name == "modifier_item_blade_mail_reflect");
 
-                if (dagon != null && _enabled == true)
-                {
-                    if (dagon.Cooldown == 0 && me.Mana > dagon.ManaCost)
-                    {
-                        if ((linkens != null && linkens.Cooldown == 0) || (linkensmod || pipe || shallowgrave || refraction))
+                Console.WriteLine(v.Modifiers);
+                if (dagon != null && Menu.Item("keyBind").GetValue<KeyBind>().Active == true) {
+                    if (dagon.Cooldown == 0 && me.Mana > dagon.ManaCost) {
+                        if ((linkens != null && linkens.Cooldown == 0) || (linkensmod || pipe || shallowgrave || refraction || blademail))
                             return;
                         var range = ShitDickFuck[dagon.Level - 1];
                         var damage = Math.Floor(Penis[dagon.Level - 1] * (1 - v.MagicDamageResist));
-                        if (GetDistance2D(v) < range && v.Health < damage)
+                        if (LowUsageDistance(me, v) < (range * range) && v.Health < damage)
                             dagon.UseAbility(v);
                     }
                 }
             }
         }
 
-        static double GetDistance2D(Hero hero)
-        {
-            var MyHero = ObjectMgr.LocalHero;
-            return Math.Sqrt(Math.Pow(hero.Position.X - MyHero.Position.X, 2) + Math.Pow(hero.Position.Y - MyHero.Position.Y, 2));
+        private static float LowUsageDistance(dynamic A, dynamic B) {
+            if (!(A is Unit || A is Vector3)) throw new ArgumentException("Not valid parameters, Accepts Unit/Vector3 only", "A");
+            if (!(B is Unit || B is Vector3)) throw new ArgumentException("Not valid parameters, Accepts Unit/Vector3 only", "B");
+            if (A is Unit) A = A.Position;
+            if (B is Unit) B = B.Position;
+            return ((B.X - A.X) * (B.X - A.X) + (B.Y - A.Y) * (B.Y - A.Y));
         }
-
-        private static void Game_OnWndProc(WndEventArgs args)
-        {
-            if (args.Msg != WM_KEYUP || args.WParam != 'K' || Game.IsChatOpen)
-                return;
-            _enabled = !_enabled;
-        }
-
-        static void CurrentDomain_DomainUnload(object sender, EventArgs e)
-        {
-            _text.Dispose();
-        }
-
-        static void Drawing_OnEndScene(EventArgs args)
-        {
-            if (Drawing.Direct3DDevice9 == null || Drawing.Direct3DDevice9.IsDisposed || !Game.IsInGame)
-                return;
-
-            var player = ObjectMgr.LocalPlayer;
-            if (player == null || player.Team == Team.Observer)
-                return;
-
-            if (_enabled)
-                _text.DrawText(null, "Dagon Stealer: On!", 80, 545, Color.GreenYellow);
-            else
-               _text.DrawText(null, "Dagon Stealer: Off!", 80, 545, Color.Tomato);
-        }
-
-        static void Drawing_OnPostReset(EventArgs args)
-        {
-            _text.OnResetDevice();
-        }
-
-        static void Drawing_OnPreReset(EventArgs args)
-        {
-            _text.OnLostDevice();
-        }
-            }
-
     }
+}
