@@ -48,7 +48,7 @@ namespace Dagon_Stealer
             if (me == null || !me.IsAlive)
                 return;
 
-            var dagon = me.Inventory.Items.FirstOrDefault(Anal => Anal.Name.Substring(0, 10) == "item_dagon");
+            var dagon = me.Inventory.Items.FirstOrDefault(Anal => Anal.Name.Contains("item_dagon"));
 
             var enemy = ObjectMgr.GetEntities<Hero>()
                         .Where(Fuck => Fuck.Team != me.Team && Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion && !Fuck.UnitState.HasFlag(UnitState.MagicImmune))
