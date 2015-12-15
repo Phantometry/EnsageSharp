@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{84CD0CEC-0F9F-4001-B640-AD0EFD1BB37F}</ProjectGuid>
+    <ProjectGuid>{134601A1-5551-47E8-A8BB-4FFBE39CC440}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Dagon_Stealer</RootNamespace>
-    <AssemblyName>Dagon Stealer</AssemblyName>
+    <RootNamespace>DagonStealer</RootNamespace>
+    <AssemblyName>DagonStealer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -36,34 +36,31 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ensage">
-      <HintPath>G:\DX\LeagueSharp\System\Ensage.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX">
-      <HintPath>G:\DX\LeagueSharp\System\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D9">
-      <HintPath>G:\DX\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.XInput">
-      <HintPath>G:\DX\LeagueSharp\System\SharpDX.XInput.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <Reference Include="Ensage">
+      <HintPath>C:\L#\LeagueSharp\System\Ensage.dll</HintPath>
+    </Reference>
+    <Reference Include="Ensage.Common">
+      <HintPath>C:\L#\LeagueSharp\System\Ensage.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Ensage.Menu">
+      <HintPath>C:\L#\LeagueSharp\System\Ensage.Menu.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="SharpDX">
+      <HintPath>C:\L#\LeagueSharp\System\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9">
+      <HintPath>C:\L#\LeagueSharp\System\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
