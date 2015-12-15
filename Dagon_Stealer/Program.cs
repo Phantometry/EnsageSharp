@@ -42,7 +42,6 @@ namespace Dagon_Stealer {
                 var pipe = v.Modifiers.Any(SuckMyCockSenpai => SuckMyCockSenpai.Name == "modifier_item_pipe_barrier");
                 var blademail = v.Modifiers.Any(PleaseDrillMyass => PleaseDrillMyass.Name == "modifier_item_blade_mail_reflect");
 
-                Console.WriteLine(v.Modifiers);
                 if (dagon != null && Menu.Item("keyBind").GetValue<KeyBind>().Active == true) {
                     if (dagon.Cooldown == 0 && me.Mana > dagon.ManaCost) {
                         if ((linkens != null && linkens.Cooldown == 0) || (linkensmod || pipe || shallowgrave || refraction || blademail))
