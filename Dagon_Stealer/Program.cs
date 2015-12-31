@@ -40,11 +40,12 @@ namespace Dagon_Stealer {
                 var refraction = v.Modifiers.Any(ButtFucker => ButtFucker.Name == "modifier_templar_assassin_refraction_damage");
                 var shallowgrave = v.Modifiers.Any(FuckMeInTheAssDaddy => FuckMeInTheAssDaddy.Name == "modifier_dazzle_shallow_grave");
                 var pipe = v.Modifiers.Any(SuckMyCockSenpai => SuckMyCockSenpai.Name == "modifier_item_pipe_barrier");
+                var abadontesticles = v.Modifiers.Any(ILoveDickInMyAss => ILoveDickInMyAss.Name == "modifier_abaddon_borrowed_time");
                 var blademail = v.Modifiers.Any(PleaseDrillMyass => PleaseDrillMyass.Name == "modifier_item_blade_mail_reflect");
 
                 if (dagon != null && Menu.Item("keyBind").GetValue<KeyBind>().Active == true) {
                     if (dagon.Cooldown == 0 && me.Mana > dagon.ManaCost) {
-                        if ((linkens != null && linkens.Cooldown == 0) || (linkensmod || pipe || shallowgrave || refraction || blademail))
+                        if ((linkens != null && linkens.Cooldown == 0) || (linkensmod || abadontesticles || pipe || shallowgrave || refraction || blademail))
                             return;
                         var range = ShitDickFuck[dagon.Level - 1];
                         var damage = Math.Floor(Penis[dagon.Level - 1] * (1 - v.MagicDamageResist));
