@@ -1,3 +1,4 @@
+
 /*
 “You have to be perfect, ideal, like timings. 
 When you trying to hit a stun after hex, timings is what you need. 
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Runtime.Caching;
 using Ensage;
 using SharpDX;
+using Ensage.Common.Menu;
 
 namespace Timings
 {
@@ -25,6 +27,9 @@ namespace Timings
 
         private static ObjectCache cache = MemoryCache.Default;
         private static CacheItemPolicy policy = new CacheItemPolicy();
+        static readonly Dictionary<Unit, ParticleEffect> Effects = new Dictionary<Unit, ParticleEffect>();
+
+        private static readonly Menu Menu = new Menu("Timings", "timings", true);
 
         private static float linaTime, bhTime, torrentTime, mysticFlareTime, linaTimer, bhTimer, torrentTimer, leshTime, leshTimer, stormTime, stormTimer;
         private static string time = "cakescript1224";
@@ -78,6 +83,10 @@ namespace Timings
 
         public static void Main(string[] cyka)
         {
+            Menu.AddItem(new MenuItem("timing", "Timings").SetValue(true));
+            Menu.AddItem(new MenuItem("showmemore", "ShowMeMore").SetValue(true));
+            Menu.AddToMainMenu();
+
             scaleX = ((float)Drawing.Width / 1366);
             scaleY = ((float)Drawing.Height / 768);
 
@@ -112,6 +121,8 @@ namespace Timings
                     try
                     {
                         var mod = v.Modifier;
+                        if (!Menu.Item("timing").GetValue<bool>()) return;
+                        if (SpecialCases.Contains(mod.Name) && !Menu.Item("showmemore").GetValue<bool>()) return;
 
                         var start = screenPos + new Vector2(-51 * scaleX, -22 * scaleY);
                         v.PicPosition = start + new Vector2((float)62.5 * scaleX, 14 * scaleY);
@@ -208,29 +219,63 @@ namespace Timings
                     && unit.ClassID != ClassID.CDOTA_BaseNPC_Creep_Siege
                     && unit.ClassID != ClassID.CDOTA_BaseNPC_Tower)
                 {
-                    if (SpecialCases.Contains(args.Modifier.Name))
-                        switch (modif.Name)
+                    if (SpecialCases.Contains(args.Modifier.Name) && Menu.Item("showmemore").GetValue<bool>())
+                    {
+                        // Circle Display for spells.
+                        var Modifier = args.Modifier;
+                        ParticleEffect Display = null;
+                        switch (Modifier.Name)
                         {
                             case "modifier_lina_light_strike_array":
+                                if (!Effects.TryGetValue(unit, out Display))
                                 {
-                                    linaTime = Game.GameTime;
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(1, new Vector3(225, 0, 0));
+                                    Display = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
+                                    Display.SetControlPoint(2, new Vector3(225 + 50, 255, 0));
+                                    Display.SetControlPoint(1, new Vector3(255, 255, 0));
+                                    Effects.Add(unit, Display);
                                 }
                                 break;
                             case "modifier_kunkka_torrent_thinker":
+                                if (!Effects.TryGetValue(unit, out Display))
                                 {
-                                    torrentTime = Game.GameTime;
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(1, new Vector3(225, 0, 0));
+                                    Display = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
+                                    Display.SetControlPoint(2, new Vector3(225 + 50, 255, 0));
+                                    Display.SetControlPoint(1, new Vector3(255, 255, 0));
+                                    Effects.Add(unit, Display);
                                 }
                                 break;
-                            case "modifier_skywrath_mage_mystic_flare_thinker":
+                            case "modifier_leshrac_split_earth_thinker":
+                                if (!Effects.TryGetValue(unit, out Display))
                                 {
-                                    mysticFlareTime = Game.GameTime;
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(1, new Vector3(170, 0, 0));
+                                    var lesh = ObjectMgr.GetEntities<Hero>()
+                                            .FirstOrDefault(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Leshrac);
+                                    Display = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
+                                    Display.SetControlPoint(2, new Vector3(lesh.Spellbook.SpellQ.AbilityData.FirstOrDefault(x => x.Name == "radius").GetValue(lesh.Spellbook.SpellQ.Level - 1) + 50, 255, 0));
+                                    Display.SetControlPoint(1, new Vector3(255, 255, 0));
+                                    Effects.Add(unit, Display);
                                 }
+                                break;
+                            case "modifier_invoker_sun_strike":
+                                if (!Effects.TryGetValue(unit, out Display))
+                                {
+                                    Display = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
+                                    Display.SetControlPoint(2, new Vector3(175 + 50, 255, 0));
+                                    Display.SetControlPoint(1, new Vector3(255, 255, 0));
+                                    Effects.Add(unit, Display);
+                                }
+                                break;
+                        }
+
+                        switch (modif.Name)
+                        {
+                            case "modifier_lina_light_strike_array":
+                                linaTime = Game.GameTime;
+                                break;
+                            case "modifier_kunkka_torrent_thinker":
+                                torrentTime = Game.GameTime;
+                                break;
+                            case "modifier_skywrath_mage_mystic_flare_thinker":
+                                mysticFlareTime = Game.GameTime;
                                 break;
                             case "modifier_enigma_black_hole_thinker":
                                 bhTime = Game.GameTime;
@@ -239,28 +284,10 @@ namespace Timings
                                 stormTime = Game.GameTime;
                                 break;
                             case "modifier_leshrac_split_earth_thinker":
-                                {
-                                    leshTime = Game.GameTime;
-                                    var lesh =
-                                        ObjectMgr.GetEntities<Hero>()
-                                            .FirstOrDefault(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Leshrac);
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(
-                                        1,
-                                        new Vector3(
-                                            lesh.Spellbook.SpellQ.AbilityData.FirstOrDefault(x => x.Name == "radius")
-                                                .GetValue(lesh.Spellbook.SpellQ.Level - 1),
-                                            0,
-                                            0));
-                                }
-                                break;
-                            case "modifier_invoker_sun_strike":
-                                {
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(1, new Vector3(175, 0, 0));
-                                }
+                                leshTime = Game.GameTime;
                                 break;
                         }
+                    }
 
                     var r = cake.FirstOrDefault(x => x.Unit.Name == unit.Name);
 
