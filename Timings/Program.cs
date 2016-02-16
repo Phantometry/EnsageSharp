@@ -1,3 +1,4 @@
+
 /*
 “You have to be perfect, ideal, like timings. 
 When you trying to hit a stun after hex, timings is what you need. 
@@ -13,11 +14,10 @@ using System.Linq;
 using System.Runtime.Caching;
 using Ensage;
 using SharpDX;
+using Ensage.Common.Menu;
 
-namespace Timings
-{
-    internal class Program
-    {
+namespace Timings {
+    internal class Program {
         private static List<ModifierInfo> cake = new List<ModifierInfo>();
 
         private static float scaleX;
@@ -25,6 +25,9 @@ namespace Timings
 
         private static ObjectCache cache = MemoryCache.Default;
         private static CacheItemPolicy policy = new CacheItemPolicy();
+        static readonly Dictionary<Unit, ParticleEffect> Effects = new Dictionary<Unit, ParticleEffect>();
+
+        private static readonly Menu Menu = new Menu("Timings", "timings", true);
 
         private static float linaTime, bhTime, torrentTime, mysticFlareTime, linaTimer, bhTimer, torrentTimer, leshTime, leshTimer, stormTime, stormTimer;
         private static string time = "cakescript1224";
@@ -33,11 +36,6 @@ namespace Timings
             {
               "modifier_phantom_lancer_juxtapose_illusion",
               "modifier_drow_ranger_trueshot_aura",
-              "modifier_slark_essence_shift_debuff",
-              "modifier_slark_essence_shift_debuff_counter",
-              "modifier_slark_essence_shift",
-              "modifier_nightstalker_darkness_blind",
-              "modifier_night_stalker_darkness",
               "modifier_slark_essence_shift_buff",
               "modifier_slark_essence_shift_debuff",
               "modifier_skeleton_king_hellfire_blast",
@@ -81,8 +79,11 @@ namespace Timings
               "modifier_invoker_sun_strike",
             };
 
-        public static void Main(string[] cyka)
-        {
+        public static void Main(string[] cyka) {
+            Menu.AddItem(new MenuItem("timing", "Timings").SetValue(true));
+            Menu.AddItem(new MenuItem("showmemore", "ShowMeMore").SetValue(true));
+            Menu.AddToMainMenu();
+
             scaleX = ((float)Drawing.Width / 1366);
             scaleY = ((float)Drawing.Height / 768);
 
@@ -94,8 +95,7 @@ namespace Timings
         }
 
 
-        static void OnDraw(EventArgs args)
-        {
+        static void OnDraw(EventArgs args) {
             if (!Game.IsInGame)
                 return;
 
@@ -104,38 +104,34 @@ namespace Timings
                 return;
 
 
-            foreach (var v in cake)
-            {
+            foreach (var v in cake) {
                 var unit = v.Unit;
-                if (unit.IsValid && unit.IsAlive && unit.IsVisible)
-                {
+                if (unit.IsValid && unit.IsAlive && unit.IsVisible) {
                     Vector2 screenPos;
                     var unitPos = unit.Position + new Vector3(0, 0, unit.HealthBarOffset);
                     if (!Drawing.WorldToScreen(unitPos, out screenPos))
                         continue;
 
-                    try
-                    {
+                    try {
                         var mod = v.Modifier;
+                        if (!Menu.Item("timing").GetValue<bool>()) return;
+                        if (SpecialCases.Contains(mod.Name) && !Menu.Item("showmemore").GetValue<bool>()) return;
 
                         var start = screenPos + new Vector2(-51 * scaleX, -22 * scaleY);
                         v.PicPosition = start + new Vector2((float)62.5 * scaleX, 14 * scaleY);
 
                         if (cache[mod.TextureName] != null)
                             Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), (DotaTexture)cache[mod.TextureName]);
-                        else
-                        {
+                        else {
                             cache.Add(mod.TextureName, Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)), policy);
-                            Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat", mod.TextureName)));
+                            Drawing.DrawRect(v.PicPosition, new Vector2(25 * scaleX, 25 * scaleY), Drawing.GetTexture(string.Format("materials/ensage_ui/modifier_textures/{0}.vmat")));
                         }
 
                         // Draw text
                         bool random = true;
-                        if (SpecialCases.Contains(mod.Name))
-                        {
+                        if (SpecialCases.Contains(mod.Name)) {
                             random = false;
-                            switch (mod.Name)
-                            {
+                            switch (mod.Name) {
                                 case "modifier_lina_light_strike_array":
                                     linaTimer = linaTime + 0.5f - Game.GameTime;
                                     time = linaTimer.ToString("0.0");
@@ -184,9 +180,7 @@ namespace Timings
 
                         Vector2 textPos = new Vector2((v.PicPosition.X) + (27 * scaleX), (v.PicPosition.Y - (0 * scaleY)));
                         Drawing.DrawText(text, textPos, new Vector2(23, 200), value < 1 ? Color.Red : Color.Aquamarine, FontFlags.AntiAlias | FontFlags.Additive | FontFlags.DropShadow);
-                    }
-                    catch (Exception)
-                    {
+                    } catch (Exception) {
                         //
                     }
                 }
@@ -194,12 +188,10 @@ namespace Timings
             }
         }
 
-        static void ModifierAdded(Unit unit, ModifierChangedEventArgs args)
-        {
+        static void ModifierAdded(Unit unit, ModifierChangedEventArgs args) {
             var modif = args.Modifier;
 
-            try
-            {
+            try {
                 if (IgnoreList.Contains(args.Modifier.Name)
                     || ((args.Modifier.Name.Contains("item") || args.Modifier.Name.Contains("truesight") || args.Modifier.Name.Contains("glyph") || args.Modifier.Name.Contains("aura"))
                     && !((args.Modifier.Name.Contains("item_pipe_barrier") || (args.Modifier.Name.Contains("windwalk"))))))
@@ -211,31 +203,57 @@ namespace Timings
                     && unit.ClassID != ClassID.CDOTA_BaseNPC_Creep_Lane
                     && unit.ClassID != ClassID.CDOTA_BaseNPC_Creep_Neutral
                     && unit.ClassID != ClassID.CDOTA_BaseNPC_Creep_Siege
-                    && unit.ClassID != ClassID.CDOTA_BaseNPC_Tower)
-                {
-                    if (SpecialCases.Contains(args.Modifier.Name))
-                        switch (modif.Name)
-                        {
+                    && unit.ClassID != ClassID.CDOTA_BaseNPC_Tower) {
+                    if (SpecialCases.Contains(args.Modifier.Name) && Menu.Item("showmemore").GetValue<bool>()) {
+                        // Circle Display for spells.
+                        var Modifier = args.Modifier;
+                        ParticleEffect Display = null;
+                        switch (Modifier.Name) {
                             case "modifier_lina_light_strike_array":
-                                {
-                                    linaTime = Game.GameTime;
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(1, new Vector3(225, 0, 0));
+                                if (!Effects.TryGetValue(unit, out Display)) {
+                                    Display = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
+                                    Display.SetControlPoint(2, new Vector3(225 + 50, 255, 0));
+                                    Display.SetControlPoint(1, new Vector3(255, 255, 0));
+                                    Effects.Add(unit, Display);
                                 }
                                 break;
                             case "modifier_kunkka_torrent_thinker":
-                                {
-                                    torrentTime = Game.GameTime;
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(1, new Vector3(225, 0, 0));
+                                if (!Effects.TryGetValue(unit, out Display)) {
+                                    Display = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
+                                    Display.SetControlPoint(2, new Vector3(225 + 50, 255, 0));
+                                    Display.SetControlPoint(1, new Vector3(255, 255, 0));
+                                    Effects.Add(unit, Display);
                                 }
                                 break;
-                            case "modifier_skywrath_mage_mystic_flare_thinker":
-                                {
-                                    mysticFlareTime = Game.GameTime;
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(1, new Vector3(170, 0, 0));
+                            case "modifier_leshrac_split_earth_thinker":
+                                if (!Effects.TryGetValue(unit, out Display)) {
+                                    var lesh = ObjectMgr.GetEntities<Hero>()
+                                            .FirstOrDefault(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Leshrac);
+                                    Display = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
+                                    Display.SetControlPoint(2, new Vector3(lesh.Spellbook.SpellQ.AbilityData.FirstOrDefault(x => x.Name == "radius").GetValue(lesh.Spellbook.SpellQ.Level - 1) + 50, 255, 0));
+                                    Display.SetControlPoint(1, new Vector3(255, 255, 0));
+                                    Effects.Add(unit, Display);
                                 }
+                                break;
+                            case "modifier_invoker_sun_strike":
+                                if (!Effects.TryGetValue(unit, out Display)) {
+                                    Display = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
+                                    Display.SetControlPoint(2, new Vector3(175 + 50, 255, 0));
+                                    Display.SetControlPoint(1, new Vector3(255, 255, 0));
+                                    Effects.Add(unit, Display);
+                                }
+                                break;
+                        }
+
+                        switch (modif.Name) {
+                            case "modifier_lina_light_strike_array":
+                                linaTime = Game.GameTime;
+                                break;
+                            case "modifier_kunkka_torrent_thinker":
+                                torrentTime = Game.GameTime;
+                                break;
+                            case "modifier_skywrath_mage_mystic_flare_thinker":
+                                mysticFlareTime = Game.GameTime;
                                 break;
                             case "modifier_enigma_black_hole_thinker":
                                 bhTime = Game.GameTime;
@@ -244,28 +262,10 @@ namespace Timings
                                 stormTime = Game.GameTime;
                                 break;
                             case "modifier_leshrac_split_earth_thinker":
-                                {
-                                    leshTime = Game.GameTime;
-                                    var lesh =
-                                        ObjectMgr.GetEntities<Hero>()
-                                            .FirstOrDefault(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Leshrac);
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(
-                                        1,
-                                        new Vector3(
-                                            lesh.Spellbook.SpellQ.AbilityData.FirstOrDefault(x => x.Name == "radius")
-                                                .GetValue(lesh.Spellbook.SpellQ.Level - 1),
-                                            0,
-                                            0));
-                                }
-                                break;
-                            case "modifier_invoker_sun_strike":
-                                {
-                                    var effect = unit.AddParticleEffect(@"particles\ui_mouseactions\range_display.vpcf");
-                                    effect.SetControlPoint(1, new Vector3(175, 0, 0));
-                                }
+                                leshTime = Game.GameTime;
                                 break;
                         }
+                    }
 
                     var r = cake.FirstOrDefault(x => x.Unit.Name == unit.Name);
 
@@ -274,52 +274,42 @@ namespace Timings
 
                     cake.Add(new ModifierInfo(modif, unit, new Vector2(0, 0)));
                 }
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 cake.Clear();
                 cake.Add(new ModifierInfo(modif, unit, new Vector2(0, 0)));
             }
 
         }
 
-        static float GetCurrentTime(Unit unit)
-        {
+        static float GetCurrentTime(Unit unit) {
             var foundEntry = cake.FirstOrDefault(x => x.Unit.ClassID == unit.ClassID);
             return foundEntry != null ? foundEntry.Modifier.RemainingTime : -1;
         }
 
-        static string GetCurrentName(Unit unit)
-        {
+        static string GetCurrentName(Unit unit) {
             var findUnit = cake.FirstOrDefault(x => x.Unit.ClassID == unit.ClassID);
             return findUnit == null ? "none" : findUnit.Modifier.Name;
         }
 
-        static void ModifierRemoved(Unit unit, ModifierChangedEventArgs args)
-        {
+        static void ModifierRemoved(Unit unit, ModifierChangedEventArgs args) {
             var mod = args.Modifier;
             if (IgnoreList.Contains(mod.Name)
                 || ((mod.Name.Contains("item") || mod.Name.Contains("truesight") || mod.Name.Contains("glyph"))
                 && !((mod.Name.Contains("item_pipe_barrier") || (mod.Name.Contains("windwalk"))))))
                 return;
 
-            try
-            {
+            try {
                 var r = cake.FirstOrDefault(x => x.Unit.Name == unit.Name && x.Modifier.Name == mod.Name);
 
                 if (r != null)
                     cake.Remove(r);
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
 
             }
         }
 
-        public class ModifierInfo : IEquatable<ModifierInfo>
-        {
-            public ModifierInfo(Modifier modifier, Unit unit, Vector2 picPos)
-            {
+        public class ModifierInfo : IEquatable<ModifierInfo> {
+            public ModifierInfo(Modifier modifier, Unit unit, Vector2 picPos) {
                 this.Modifier = modifier;
                 this.Unit = unit;
                 this.PicPosition = picPos;
@@ -327,8 +317,7 @@ namespace Timings
             public Modifier Modifier { get; set; }
             public Unit Unit { get; set; }
             public Vector2 PicPosition { get; set; }
-            public bool Equals(ModifierInfo other)
-            {
+            public bool Equals(ModifierInfo other) {
                 if (other == null) return false;
                 return (this.Unit.Equals(other.Unit));
             }
