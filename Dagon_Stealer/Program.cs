@@ -1,9 +1,11 @@
+
 using System;
 using System.Linq;
 using Ensage.Common.Menu;
 using Ensage;
 using SharpDX;
 using SharpDX.Direct3D9;
+using System.Collections.Generic;
 
 namespace Dagon_Stealer {
     class Program {
@@ -12,10 +14,22 @@ namespace Dagon_Stealer {
         private static readonly int[] ShitDickFuck = new int[5] { 600, 650, 700, 750, 800 };
         private static readonly Menu Menu = new Menu("Dagon Stealer", "dagonstealer", true);
 
+        private static List<string> Ignore = new List<string> 
+        {
+            "modifier_item_sphere_target",
+            "modifier_templar_assassin_refraction_absorb",
+            "modifier_dazzle_shallow_grave",
+            "modifier_item_pipe_barrier",
+            "modifier_nyx_assassin_spiked_carapace",
+            "modifier_item_blade_mail_reflect",
+            "modifier_item_lotus_orb_active",
+        };
+
+        private static Dictionary<string, bool> enemies = new Dictionary<string, bool>();
+
         private static void Main(string[] args) {
-            var optionsMenu = new Menu("Options", "options");
-            Menu.AddSubMenu(optionsMenu);
             Menu.AddItem(new MenuItem("keyBind", "Main Key").SetValue(new KeyBind('K', KeyBindType.Toggle, true)));
+            Menu.AddItem(new MenuItem("enemies", "Heroes").SetValue(new HeroToggler(enemies)));
             Menu.AddToMainMenu();
 
             Game.OnUpdate += Vagina;
@@ -29,23 +43,27 @@ namespace Dagon_Stealer {
             if (me == null || !me.IsAlive)
                 return;
 
+            foreach (var v in ObjectMgr.GetEntities<Hero>().Where(x => x.Team != me.Team && !x.IsIllusion)) {
+                if (!enemies.ContainsKey(v.Name)) {
+                    if (enemies.Count > 4) enemies.Clear();
+                    enemies.Add(v.Name, true);
+                    Menu.Item("enemies").SetValue(new HeroToggler(enemies));
+                }
+            }
+
             var dagon = me.Inventory.Items.FirstOrDefault(Anal => Anal.Name.Contains("item_dagon"));
             var enemy = ObjectMgr.GetEntities<Hero>()
                         .Where(Fuck => Fuck.Team != me.Team && Fuck.IsAlive && Fuck.IsVisible && !Fuck.IsIllusion && !Fuck.UnitState.HasFlag(UnitState.MagicImmune))
                         .ToList();
 
+            if (me.Inventory.Items.Any(v => v.IsChanneling) || me.Spellbook.Spells.Any(v => v.IsChanneling)) return;
+
             foreach (var v in enemy) {
                 var linkens = v.Inventory.Items.FirstOrDefault(Gay => Gay.Name == "item_sphere");
-                var linkensmod = v.Modifiers.Any(Anything => Anything.Name == "modifier_item_sphere_target");
-                var refraction = v.Modifiers.Any(ButtFucker => ButtFucker.Name == "modifier_templar_assassin_refraction_damage");
-                var shallowgrave = v.Modifiers.Any(FuckMeInTheAssDaddy => FuckMeInTheAssDaddy.Name == "modifier_dazzle_shallow_grave");
-                var pipe = v.Modifiers.Any(SuckMyCockSenpai => SuckMyCockSenpai.Name == "modifier_item_pipe_barrier");
-                var abadontesticles = v.Modifiers.Any(ILoveDickInMyAss => ILoveDickInMyAss.Name == "modifier_abaddon_borrowed_time");
-                var blademail = v.Modifiers.Any(PleaseDrillMyass => PleaseDrillMyass.Name == "modifier_item_blade_mail_reflect");
 
-                if (dagon != null && Menu.Item("keyBind").GetValue<KeyBind>().Active == true) {
+                if (dagon != null && Menu.Item("keyBind").GetValue<KeyBind>().Active == true && Menu.Item("enemies").GetValue<HeroToggler>().IsEnabled(v.Name)) {
                     if (dagon.Cooldown == 0 && me.Mana > dagon.ManaCost) {
-                        if ((linkens != null && linkens.Cooldown == 0) || (linkensmod || abadontesticles || pipe || shallowgrave || refraction || blademail))
+                        if ((linkens != null && linkens.Cooldown == 0) || v.Modifiers.Any(x => Ignore.Contains(x.Name)))
                             return;
                         var range = ShitDickFuck[dagon.Level - 1];
                         var damage = Math.Floor(Penis[dagon.Level - 1] * (1 - v.MagicDamageResist));
