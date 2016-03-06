@@ -64,7 +64,7 @@ namespace BlindPrediction {
             if (!Game.IsInGame) return;
 
             foreach (var v in HeroList) {
-                if (!v.Key.IsVisible) {
+                if (!v.Key.IsVisible && v.Key.IsAlive) {
                     Vector3 ePos = new Vector3(v.Key.NetworkPosition.X + (float)Math.Cos(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value), 
                                                 v.Key.NetworkPosition.Y + (float)Math.Sin(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value), 
                                                 v.Key.NetworkPosition.Z + 50);
@@ -86,7 +86,7 @@ namespace BlindPrediction {
             if (player == null || player.Team == Team.Observer) return;
 
             foreach (var v in HeroList) {
-                if (!v.Key.IsVisible) {
+                if (!v.Key.IsVisible && v.Key.IsAlive) {
                     Vector3 ePos = new Vector3(v.Key.NetworkPosition.X + (float)Math.Cos(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
                                                 v.Key.NetworkPosition.Y + (float)Math.Sin(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
                                                 v.Key.NetworkPosition.Z + 50);
