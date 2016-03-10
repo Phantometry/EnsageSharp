@@ -33,8 +33,6 @@ namespace BlindPrediction {
 
         static void Update(EventArgs e) {
             if (!Game.IsInGame) {
-                if (HeroList.Any())
-                    HeroList.Clear();
                 return;
             }
             Hero MyHero = ObjectManager.LocalHero;
@@ -49,10 +47,14 @@ namespace BlindPrediction {
             // Update last seen time of all visible heroes
             var ValuesToUpdate = new List<Hero>();
 
-            foreach (var v in HeroList) {
-                if (v.Key.IsVisible) {
-                    ValuesToUpdate.Add(v.Key);
+            try {
+                foreach (var v in HeroList) {
+                    if (v.Key.IsVisible) {
+                        ValuesToUpdate.Add(v.Key);
+                    }
                 }
+            } catch (EntityNotFoundException) {
+                HeroList.Clear(); // Reset herolist on game change.
             }
 
             foreach (var item in ValuesToUpdate) {
