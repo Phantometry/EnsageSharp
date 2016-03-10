@@ -63,14 +63,18 @@ namespace BlindPrediction {
         static void Draw(EventArgs e) {
             if (!Game.IsInGame) return;
 
-            foreach (var v in HeroList) {
-                if (!v.Key.IsVisible && v.Key.IsAlive) {
-                    Vector3 ePos = new Vector3(v.Key.NetworkPosition.X + (float)Math.Cos(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value), 
-                                                v.Key.NetworkPosition.Y + (float)Math.Sin(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value), 
-                                                v.Key.NetworkPosition.Z + 50);
-                    if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
-                    Drawing.DrawRect(Drawing.WorldToScreen(ePos), new Vector2(50, 50), Drawing.GetTexture("materials/ensage_ui/miniheroes/" + v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5) + ".vmat"));
+            try {
+                foreach (var v in HeroList) {
+                    if (!v.Key.IsVisible && v.Key.IsAlive) {
+                        Vector3 ePos = new Vector3(v.Key.NetworkPosition.X + (float)Math.Cos(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
+                                                    v.Key.NetworkPosition.Y + (float)Math.Sin(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
+                                                    v.Key.NetworkPosition.Z + 50);
+                        if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
+                        Drawing.DrawRect(Drawing.WorldToScreen(ePos) - 25, new Vector2(50, 50), Drawing.GetTexture("materials/ensage_ui/miniheroes/" + v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5) + ".vmat"));
+                    }
                 }
+            } catch (Exception) {
+                // Do nothing, HeroList has simply been modified during this foreach loop.
             }
         }
 
@@ -85,17 +89,21 @@ namespace BlindPrediction {
             var player = ObjectMgr.LocalPlayer;
             if (player == null || player.Team == Team.Observer) return;
 
-            foreach (var v in HeroList) {
-                if (!v.Key.IsVisible && v.Key.IsAlive) {
-                    Vector3 ePos = new Vector3(v.Key.NetworkPosition.X + (float)Math.Cos(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
-                                                v.Key.NetworkPosition.Y + (float)Math.Sin(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
-                                                v.Key.NetworkPosition.Z + 50);
-                    if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
-                    Text.DrawText(null, FirstCharToUpper(v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5)),
-                                        (int)Math.Round(WorldToMiniMap(ePos).X, MidpointRounding.AwayFromZero) - (int)(v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5).Length*3*ScaleX), 
-                                        (int)Math.Round(WorldToMiniMap(ePos).Y, MidpointRounding.AwayFromZero) - (int)(5*ScaleY), 
-                                        Color.White);
+            try {
+                foreach (var v in HeroList) {
+                    if (!v.Key.IsVisible && v.Key.IsAlive) {
+                        Vector3 ePos = new Vector3(v.Key.NetworkPosition.X + (float)Math.Cos(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
+                                                    v.Key.NetworkPosition.Y + (float)Math.Sin(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
+                                                    v.Key.NetworkPosition.Z + 50);
+                        if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
+                        Text.DrawText(null, FirstCharToUpper(v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5)),
+                                            (int)Math.Round(WorldToMiniMap(ePos).X, MidpointRounding.AwayFromZero) - (int)(v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5).Length * 3 * ScaleX),
+                                            (int)Math.Round(WorldToMiniMap(ePos).Y, MidpointRounding.AwayFromZero) - (int)(5 * ScaleY),
+                                            Color.White);
+                    }
                 }
+            } catch (Exception) {
+                // Do nothing, HeroList has simply been modified during this foreach loop.
             }
 
         }
