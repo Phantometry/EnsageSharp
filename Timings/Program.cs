@@ -55,6 +55,7 @@ namespace Timings
               "modifier_abaddon_frostmourne_debuff",
               "modifier_kunkka_ghost_ship_damage_absorb",
               "modifier_jakiro_liquid_fire_burn",
+              "modifier_beastmaster_inner_beast",
               "modifier_beastmaster_inner_beast_aura",
               "modifier_crystal_maiden_brilliance_aura",
               "modifier_elder_titan_natural_order_aura",
