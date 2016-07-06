@@ -17,7 +17,7 @@ namespace BlindPrediction {
 
         static void Main(string[] args) {
             Menu.AddItem(new MenuItem("toggle", "Enabled").SetValue(true));
-            Menu.AddItem(new MenuItem("predict", "Predict movements?").SetValue(true).SetTooltip("Predict movements, otherwise just show last known prediction."));
+            Menu.AddItem(new MenuItem("predict", "Predict movements?").SetValue(true).SetTooltip("Predict movements, otherwise just show last known position."));
             Menu.AddToMainMenu();
 
             ScaleX = Drawing.Width / 1920f;
