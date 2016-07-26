@@ -1,4 +1,3 @@
-
 /*
 “You have to be perfect, ideal, like timings. 
 When you trying to hit a stun after hex, timings is what you need. 
@@ -60,6 +59,8 @@ namespace Timings
               "modifier_crystal_maiden_brilliance_aura",
               "modifier_elder_titan_natural_order_aura",
               "modifier_nightstalker_darkness_thinker",
+              "modifier_nightstalker_darkness_blind",
+              "modifier_nightstalker_darkness",
               "modifier_luna_lunar_blessing_aura",
               "modifier_omniknight_degen_aura",
               "modifier_obsidian_destroyer_essence_aura",
@@ -67,6 +68,8 @@ namespace Timings
               "modifier_spirit_breaker_empowering_haste",
               "modifier_bounty_hunter_track_effect",
               "modifier_spirit_breaker_empowering_haste_aura",
+              "modifier_shredder_reactive_armor_stack",
+              "modifier_shredder_reactive_armor",
 
             };
 
@@ -104,7 +107,7 @@ namespace Timings
             if (!Game.IsInGame)
                 return;
 
-            var player = ObjectMgr.LocalPlayer;
+            var player = ObjectManager.LocalPlayer;
             if (player == null || player.Team == Team.Observer)
                 return;
 
@@ -248,10 +251,10 @@ namespace Timings
                             case "modifier_leshrac_split_earth_thinker":
                                 if (!Effects.TryGetValue(unit, out Display))
                                 {
-                                    var lesh = ObjectMgr.GetEntities<Hero>()
+                                    var lesh = ObjectManager.GetEntities<Hero>()
                                             .FirstOrDefault(x => x.ClassID == ClassID.CDOTA_Unit_Hero_Leshrac);
                                     Display = unit.AddParticleEffect(@"particles\ui_mouseactions\drag_selected_ring.vpcf");
-                                    Display.SetControlPoint(2, new Vector3(lesh.Spellbook.SpellQ.AbilityData.FirstOrDefault(x => x.Name == "radius").GetValue(lesh.Spellbook.SpellQ.Level - 1) + 50, 255, 0));
+                                    Display.SetControlPoint(2, new Vector3(lesh.Spellbook.SpellQ.AbilitySpecialData.FirstOrDefault(x => x.Name == "radius").GetValue(lesh.Spellbook.SpellQ.Level - 1) + 50, 255, 0));
                                     Display.SetControlPoint(1, new Vector3(255, 255, 0));
                                     Effects.Add(unit, Display);
                                 }
@@ -358,4 +361,3 @@ namespace Timings
         }
     }
 }
-
