@@ -36,6 +36,8 @@ namespace Timings
         private static readonly List<string> IgnoreList = new List<string>()
             {
               "modifier_phantom_lancer_juxtapose_illusion",
+              "modifier_alpha_wolf_command_aura",
+              "modifier_alpha_wolf_command_aura_bonus",
               "modifier_drow_ranger_trueshot_aura",
               "modifier_slark_essence_shift_buff",
               "modifier_slark_essence_shift_debuff",
@@ -66,10 +68,12 @@ namespace Timings
               "modifier_obsidian_destroyer_essence_aura",
               "modifier_sand_king_caustic_finale_orb",
               "modifier_spirit_breaker_empowering_haste",
+              "modifier_alchemist_acid_spray",
               "modifier_bounty_hunter_track_effect",
               "modifier_spirit_breaker_empowering_haste_aura",
               "modifier_shredder_reactive_armor_stack",
               "modifier_shredder_reactive_armor",
+              "modifier_beastmaster_boar_poison_effect",
 
             };
 
