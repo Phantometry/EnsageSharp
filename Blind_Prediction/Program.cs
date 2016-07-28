@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ensage;
+using Ensage.Common.Menu;
 using SharpDX;
 using SharpDX.Direct3D9;
 
@@ -10,8 +11,15 @@ namespace BlindPrediction {
         static Dictionary<Hero, float> HeroList = new Dictionary<Hero, float>();
         static Font Text;
         static float ScaleX, ScaleY;
+        private static readonly Menu Menu = new Menu("Blind Prediction", "BlindPrediction", true);
+        
+        
 
         static void Main(string[] args) {
+            Menu.AddItem(new MenuItem("toggle", "Enabled").SetValue(true));
+            Menu.AddItem(new MenuItem("predict", "Predict movements?").SetValue(true).SetTooltip("Predict movements, otherwise just show last known position."));
+            Menu.AddToMainMenu();
+
             ScaleX = Drawing.Width / 1920f;
             ScaleY = Drawing.Height / 1080f;
 
@@ -37,6 +45,7 @@ namespace BlindPrediction {
                     HeroList.Clear();
                 return;
             }
+            if (!Menu.Item("toggle").GetValue<bool>()) return;
             Hero MyHero = ObjectManager.LocalHero;
 
             // Save heroes to dictionary as they cannot be detected in fog (Format <Hero, Last Seen Time>)
@@ -61,16 +70,30 @@ namespace BlindPrediction {
         }
 
         static void Draw(EventArgs e) {
+
             if (!Game.IsInGame) return;
+            if (!Menu.Item("toggle").GetValue<bool>()) return;
 
             try {
                 foreach (var v in HeroList) {
                     if (!v.Key.IsVisible && v.Key.IsAlive) {
-                        Vector3 ePos = new Vector3(v.Key.NetworkPosition.X + (float)Math.Cos(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
+                        if (Menu.Item("predict").GetValue<bool>())
+                        {
+                            Vector3 ePos = new Vector3(v.Key.NetworkPosition.X + (float)Math.Cos(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
                                                     v.Key.NetworkPosition.Y + (float)Math.Sin(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
                                                     v.Key.NetworkPosition.Z + 50);
-                        if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
-                        Drawing.DrawRect(Drawing.WorldToScreen(ePos) - 25, new Vector2(50, 50), Drawing.GetTexture("materials/ensage_ui/miniheroes/" + v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5) + ".vmat"));
+                            if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
+                            Drawing.DrawRect(Drawing.WorldToScreen(ePos) - 25, new Vector2(50, 50), Drawing.GetTexture("materials/ensage_ui/miniheroes/" + v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5) + ".vmat"));
+                        }
+                        else
+                        {
+                            Vector3 ePos = new Vector3(v.Key.NetworkPosition.X,
+                                                    v.Key.NetworkPosition.Y,
+                                                    v.Key.NetworkPosition.Z);
+                            if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
+                            Drawing.DrawRect(Drawing.WorldToScreen(ePos) - 25, new Vector2(50, 50), Drawing.GetTexture("materials/ensage_ui/miniheroes/" + v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5) + ".vmat"));
+                        }
+                        
                     }
                 }
             } catch (Exception) {
@@ -83,6 +106,7 @@ namespace BlindPrediction {
         }
 
         static void Drawing_OnEndScene(EventArgs args) {
+            if (!Menu.Item("toggle").GetValue<bool>()) return;
             if (Drawing.Direct3DDevice9 == null || Drawing.Direct3DDevice9.IsDisposed || !Game.IsInGame)
                 return;
 
@@ -92,14 +116,46 @@ namespace BlindPrediction {
             try {
                 foreach (var v in HeroList) {
                     if (!v.Key.IsVisible && v.Key.IsAlive) {
-                        Vector3 ePos = new Vector3(v.Key.NetworkPosition.X + (float)Math.Cos(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
-                                                    v.Key.NetworkPosition.Y + (float)Math.Sin(v.Key.NetworkRotationRad) * v.Key.MovementSpeed * (Game.GameTime - v.Value),
-                                                    v.Key.NetworkPosition.Z + 50);
-                        if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
-                        Text.DrawText(null, FirstCharToUpper(v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5)),
-                                            (int)Math.Round(WorldToMiniMap(ePos).X, MidpointRounding.AwayFromZero) - (int)(v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5).Length * 3 * ScaleX),
-                                            (int)Math.Round(WorldToMiniMap(ePos).Y, MidpointRounding.AwayFromZero) - (int)(5 * ScaleY),
-                                            Color.White);
+                        if (Menu.Item("predict").GetValue<bool>())
+                        {
+                            Vector3 ePos =
+                                new Vector3(
+                                    v.Key.NetworkPosition.X +
+                                    (float) Math.Cos(v.Key.NetworkRotationRad)*v.Key.MovementSpeed*
+                                    (Game.GameTime - v.Value),
+                                    v.Key.NetworkPosition.Y +
+                                    (float) Math.Sin(v.Key.NetworkRotationRad)*v.Key.MovementSpeed*
+                                    (Game.GameTime - v.Value),
+                                    v.Key.NetworkPosition.Z + 50);
+                            if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
+                            Text.DrawText(null,
+                                FirstCharToUpper(v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5)),
+                                (int) Math.Round(WorldToMiniMap(ePos).X, MidpointRounding.AwayFromZero) -
+                                (int) (v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5).Length*3*ScaleX),
+                                (int) Math.Round(WorldToMiniMap(ePos).Y, MidpointRounding.AwayFromZero) -
+                                (int) (5*ScaleY),
+                                Color.White);
+
+                        }
+                        else
+                        {
+                            Vector3 ePos =
+                                new Vector3(
+                                    v.Key.NetworkPosition.X,
+                                    v.Key.NetworkPosition.Y,
+                                    v.Key.NetworkPosition.Z);
+                            if (v.Key.NetworkActivity != NetworkActivity.Move) ePos = v.Key.NetworkPosition;
+                            Text.DrawText(null,
+                                FirstCharToUpper(v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5)),
+                                (int)Math.Round(WorldToMiniMap(ePos).X, MidpointRounding.AwayFromZero) -
+                                (int)(v.Key.Name.Substring(v.Key.Name.LastIndexOf("hero_") + 5).Length * 3 * ScaleX),
+                                (int)Math.Round(WorldToMiniMap(ePos).Y, MidpointRounding.AwayFromZero) -
+                                (int)(5 * ScaleY),
+                                Color.White);
+
+                        }
+
+
                     }
                 }
             } catch (Exception) {
@@ -117,6 +173,7 @@ namespace BlindPrediction {
         }
 
         static Vector2 WorldToMiniMap(Vector3 Pos) {
+            
             float MapLeft = -8000;
             float MapTop = 7350;
             float MapRight = 7500;
