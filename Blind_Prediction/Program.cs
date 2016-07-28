@@ -48,7 +48,7 @@ namespace BlindPrediction {
             if (!Menu.Item("toggle").GetValue<bool>()) return;
             Hero MyHero = ObjectManager.LocalHero;
 
-            // Save heroes to dictionary as they cannot be detected in fog (Format <Hero, Last Seen Time>)
+            // Save heroes to dictionary as they cannot be detected in fog (Format <Hero, Last Seen Time>) 
             foreach (Hero v in ObjectManager.GetEntities<Hero>().Where(x => x.Team != MyHero.Team)) {
                 if (!HeroList.ContainsKey(v)) {
                     HeroList.Add(v, 0);
