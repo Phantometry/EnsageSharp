@@ -51,6 +51,7 @@ namespace Timings
               "modifier_brewmaster_primal_split",
               "modifier_bristleback_quill_spray_stack",
               "modifier_abaddon_frostmourne_buff",
+              "modifier_obsidian_destroyer_arcane_orb",
               "modifier_rubick_null_field_effect",
               "modifier_rubick_null_field",
               "modifier_abaddon_frostmourne_debuff",
